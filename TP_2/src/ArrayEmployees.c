@@ -71,8 +71,8 @@ int addEmployee(Employee list[], int len, int id, char name[],char lastName[],fl
 		error=0;
 		if(index!=-1){
 			list[index].id=id;
-			strcpy(list[index].name, name);
-			strcpy(list[index].lastName, lastName);
+			strncpy(list[index].name, name, 51);
+			strncpy(list[index].lastName, lastName, 51);
 			list[index].salary=salary;
 			list[index].sector=sector;
 			list[index].isEmpty=OCUPADO;
@@ -89,6 +89,8 @@ int addEmployee(Employee list[], int len, int id, char name[],char lastName[],fl
 */
 Employee addEmployeeNew(int idNuevoEmpleado)
 {
+	printf("\nINGRESE LOS DATOS DEL NUEVO EMPLEADO\n");
+	printf("------------------------------------\n");
 	Employee empleadoNuevo;
     empleadoNuevo.id = idNuevoEmpleado;
     getUsuario(empleadoNuevo.name, "\nNOMBRE: ", "\nError ingrese un nombre valido (max 30 caracteres): ", 1, 30, 4);
@@ -96,6 +98,7 @@ Employee addEmployeeNew(int idNuevoEmpleado)
     empleadoNuevo.salary = cargarUnEntero("\nIngrese el SALARIO:$", "\nError, ingrese un salario valido(entre $30000 y $90000): ", 30000 , 90000, 4);
     empleadoNuevo.sector = cargarUnEntero("\nIngrese el SECTOR: ", "\nError, ingrese un SECTOR valido(entre 1 y 4): ", 1 , 4, 4);
     empleadoNuevo.isEmpty = OCUPADO;
+	printf("------------------------------------\n");
 
     return empleadoNuevo;
 }
@@ -120,12 +123,14 @@ int findEmployeeById(Employee list[], int len,int id)
 			if(list[i].isEmpty == OCUPADO){
 				if(list[i].id == id){
 					index = i;
+					break;
 				}
 			}
 		}
  	}
  	return index;
 }
+
 /** \brief Muestra el contenido en la estructura de empleados
  *
  * \param Employee list[] = estructura de empleados
@@ -168,6 +173,7 @@ void printEmploye(Employee empleado)
     printf("--------------------------------------------------------------------------\n");
 }
 
+
 /** \brief Elimina un empleado por ID
  *
  * \param Employee list[] = estructura de empleados
@@ -181,6 +187,7 @@ int removeEmployee(Employee list[], int len, int ultimoId)
 	int error;
 	int i;
 	int idIngresado;
+	int confirmar;
 	error= -1;
 	if(list != NULL)
 	{
@@ -188,75 +195,28 @@ int removeEmployee(Employee list[], int len, int ultimoId)
 		idIngresado= cargarUnEntero("Ingrese el id a eliminar: ", "Error, ingrese un id valido: ", 1000, ultimoId-1, 4);
 		i = findEmployeeById(list, len, idIngresado);
 		if(i != -1){
-			list[i].isEmpty=VACIO;
-			list[i].salary=0;
-			list[i].sector=0;
-			strcpy(list[i].name, " ");
-			strcpy(list[i].lastName, " ");
-	        printf("\nEl EMPLEADO fue borrado con exito....\n\n");
-			error=0;
-		}
-	}
-	return error;
-}
-
-void eSort(Employee *prodUno, Employee *prodDos)
-{
-	Employee prodAux;
-
-	prodAux = *prodUno;
-	*prodUno = *prodDos;
-	*prodDos = prodAux;
-}
-
-/** \brief Orena los elementos de la estructura por el apellido y el sector
- * el ordenamiento tiene un criterio de UP / DOWN
- *
- * \param Employee list[] = estructura de empleados
- * \param len = tamaño de estructura empleados.
- * \param int order [1] indica UP - [0] indica DOWN
- *
- * \return Devuelve -1 si hay un error y 0 si ordeno correctamente
- */
-int sortEmployees(Employee list[], int len, int order)
-{
-	int error;
-	int i;
-	int j;
-	error = -1;
-
-	if(list != NULL)
-	{
-		for (i = 0; i < len-1; ++i) {
-			for (j = i+1; j < len; ++j) {
-				if(order==1){
-					error= 0;
-					if(list[i].sector<list[j].sector){
-						eSort(&list[i], &list[j]);
-					}else{
-						if(list[i].sector==list[j].sector){
-							if(strcmp(list[i].lastName, list[j].lastName)>0){
-								eSort(&list[i], &list[j]);
-							}
-						}
-					}
-				}else{
-					error= 0;
-					if(list[i].sector>list[j].sector){
-						eSort(&list[i], &list[j]);
-					}else{
-						if(list[i].sector==list[j].sector){
-							if(strcmp(list[i].lastName, list[j].lastName)<0){
-								eSort(&list[i], &list[j]);
-							}
-						}
-					}
-				}
+			limpiar();
+	        printf("\nEMPLEADO A ELIMINAR\n\n");
+            printf("__________________________________________________________________________\n");
+        	printf("  ID EMPLEADO   |  SECTOR  |   SALARIO   |     NOMBRE     |    APELLIDO   |\n");
+			printEmploye(list[i]);
+			confirmar = cargarUnEntero("Desea Eliminar el Empleado?(1. Si||2. No): ", "Error, desea Eliminar el Empleado?(1. Si||2. No): ", 1, 2, 4);
+			if(confirmar == 1)
+			{
+				list[i].isEmpty=VACIO;
+				list[i].salary=0;
+				list[i].sector=0;
+				strcpy(list[i].name, " ");
+				strcpy(list[i].lastName, " ");
+		        printf("\nEl EMPLEADO fue borrado con exito....\n\n");
+				error=0;
+			}else{
+				error=2;
+		        printf("\nEl EMPLEADO no fue borrado....\n\n");
 			}
+
 		}
 	}
-
-
 	return error;
 }
 
@@ -265,6 +225,9 @@ int modificarEmpleado(Employee list[], int len, int ultimoId)
     int auxId;
     int opcion;
     int index;
+    int auxInt;
+    char auxString[51];
+    int confirmar;
     int error;
     error=-1;
     if(list != NULL)
@@ -275,90 +238,75 @@ int modificarEmpleado(Employee list[], int len, int ultimoId)
         index= findEmployeeById(list, len, auxId);
         if(index!=-1)
         {
-        	limpiar();
-            error=0;
-            printf("  ID EMPLEADO   |  SECTOR  |   SALARIO   |     NOMBRE     |    APELLIDO   |\n");
-            printEmploye(list[index]);
-            printf("________________________\n");
-            printf("| Que desea modificar? |\n");
-            printf("| 1. NOMBRE            |\n");
-            printf("| 2. APELLIDO          |\n");
-            printf("| 3. SALARIO           |\n");
-            printf("| 4. SECTOR            |\n");
-            printf("| 0. VOLVER AL MENU    |\n");
-            printf("|______________________|\n");
-            opcion=cargarUnEntero("\nElija una opcion: ", "\nError, elija una opcion entre 1 o 4: ", 0, 4, 4);
+        	do{
+        		limpiar();
+            	error=0;
+                printf("__________________________________________________________________________\n");
+            	printf("  ID EMPLEADO   |  SECTOR  |   SALARIO   |     NOMBRE     |    APELLIDO   |\n");
+            	printEmploye(list[index]);
+            	printf("________________________\n");
+            	printf("| Que desea modificar? |\n");
+            	printf("| 1. NOMBRE            |\n");
+            	printf("| 2. APELLIDO          |\n");
+            	printf("| 3. SALARIO           |\n");
+            	printf("| 4. SECTOR            |\n");
+            	printf("| 0. VOLVER AL MENU    |\n");
+            	printf("|______________________|\n");
+            	opcion=cargarUnEntero("\nElija una opcion: ", "\nError, elija una opcion entre 1 o 4: ", 0, 4, 4);
 
-            switch(opcion)
-            {
-            	case 1:
-            		getUsuario(list[index].name, "Ingrese el nuevo NOMBRE: \n", "\nError, ingrese un nombre valido (max 30 caracteres): ", 1, 30, 4);
-                    printf("\n El NOMBRE fue modificada con exito...\n");
-                    break;
-                case 2:
-            		getUsuario(list[index].lastName, "Ingrese el nuevo APELLIDO: \n", "\nError, ingrese un APELLIDO valido (max 30 caracteres): ", 1, 30, 4);
-                    printf("\n El APELLIDO fue modificada con exito...\n");
-                    error=0;
-                    break;
-                case 3:
-                	list[index].salary=cargarUnEntero("Ingrese el SALARIO: \n","Error, ingrese un salario entre 20000 y 99999: \n",20000, 99999, 4);
-                    printf("\n El SALARIO fue modificada con exito...\n");
-                    break;
-                case 4:
-                	list[index].sector=cargarUnEntero("Ingrese el SECTOR: \n","Error, ingrese un sector entre 1 y 4: \n",1, 4, 4);
-                    printf("\n El SECTOR fue modificada con exito...\n");
-                    break;
-            }
+            	switch(opcion)
+            	{
+            		case 1:
+            			getUsuario(auxString, "Ingrese el nuevo Nombre: ", "\nError, ingrese un Nombre valido (max 51 caracteres): ", 1, 51, 4);
+            			printf("\nEl nuevo Nombre es: %s\n", auxString);
+            			confirmar = cargarUnEntero("Desea modificar el Nombre?(1. Si||2. No): ", "Error, desea modificar el Nombre?(1. Si||2. No): ", 1, 2, 4);
+            			if(confirmar==1)
+            			{
+                			printf("\nEl Nombre fue modificada con exito...\n");
+                			strncpy(list[index].name, auxString, 51);
+            			}else{
+                			printf("\nEl Nombre no fue modificado...\n");
+            			}
+                    	break;
+                	case 2:
+            			getUsuario(auxString, "Ingrese el nuevo Apellido: ", "\nError, ingrese un Apellido valido (max 51 caracteres): ", 1, 51, 4);
+            			printf("\nEl nuevo Apellido es: %s\n", auxString);
+            			confirmar = cargarUnEntero("Desea modificar el Apellido?(1. Si||2. No): ", "Error, desea modificar el Apellido?(1. Si||2. No): ", 1, 2, 4);
+            			if(confirmar==1)
+            			{
+                			printf("\nEl Apellido fue modificado con exito...\n");
+                			strncpy(list[index].lastName, auxString, 51);
+            			}else{
+                			printf("\nEl Apellido no fue modificado...\n");
+            			}
+                    	break;
+                	case 3:
+                		auxInt=cargarUnEntero("Ingrese el Salario: ","Error, ingrese un Salario entre $30000 y $90000: \n", 30000, 90000, 4);
+            			printf("\nEl nuevo Salario es: %d\n", auxInt);
+            			confirmar = cargarUnEntero("Desea modificar el Salario?(1. Si||2. No): ", "Error, desea modificar el Salario?(1. Si||2. No): ", 1, 2, 4);
+            			if(confirmar==1)
+            			{
+                    		printf("\nEl Salario fue modificada con exito...\n");
+                    		list[index].salary = auxInt;
+            			}else{
+                			printf("\n El Salario no fue modificado...\n");
+            			}
+                    	break;
+                	case 4:
+                		auxInt=cargarUnEntero("Ingrese el Sector: ","Error, ingrese un Sector entre 1 y 4: \n",1, 4, 4);
+            			printf("\nEl nuevo Sector es: %d\n", auxInt);
+            			confirmar = cargarUnEntero("Desea modificar el Salario?(1. Si||2. No): ", "Error, desea modificar el Salario?(1. Si||2. No): ", 1, 2, 4);
+            			if(confirmar==1)
+            			{
+                    		printf("\nEl Sector fue modificada con exito...\n");
+                    		list[index].sector = auxInt;
+            			}else{
+                			printf("\nEl Sector no fue modificado...\n");
+            			}
+                		break;
+            	}
+        	}while(opcion != 0);
         }
     }
     return error;
-}
-
-float totalSalarios(Employee list[], int len)
-{
-	int i;
-	float acumSalarios;
-	acumSalarios = 0;
-	if(list != NULL)
-	{
-		for (i = 0; i < len; ++i){
-			if(list[i].isEmpty == OCUPADO){
-				acumSalarios = acumSalarios + list[i].salary;
-			}
-		}
-	}
-	return acumSalarios;
-}
-float promSalario(Employee list[], int len, float totalSalario)
-{
-	int i;
-	int contEmpleados;
-	float salarioProm;
-	contEmpleados = 0;
-	if(list != NULL)
-	{
-		for (i = 0; i < len; ++i){
-			if(list[i].isEmpty == OCUPADO){
-				contEmpleados++;
-			}
-		}
-		salarioProm = totalSalario/contEmpleados;
-	}
-	return salarioProm;
-}
-
-int cantSalarioPromedio(Employee list[], int len, float salarioProm)
-{
-	int i;
-	int contEmpleados;
-	contEmpleados = 0;
-	if(list != NULL)
-	{
-		for (i = 0; i < len; ++i){
-			if(list[i].salary > salarioProm){
-				contEmpleados++;
-			}
-		}
-	}
-	return contEmpleados;
 }

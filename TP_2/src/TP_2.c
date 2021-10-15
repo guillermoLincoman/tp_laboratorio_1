@@ -12,10 +12,12 @@
 int main()
 {
     setbuf(stdout, NULL);
-    int idProxTrabajo=1000;
+    int idProxEmpleado;
+    int contEmpleado;
     int aux;
     int opcion;
-
+    contEmpleado=0;
+    idProxEmpleado=1000;
     Employee empleado[TE];
     aux= iniciar(empleado, TE);
     if(aux!=0){
@@ -39,39 +41,39 @@ int main()
         switch(opcion)
         {
             case 1:
-            	if(idProxTrabajo<2000)
-            	{
-                    aux= agregarEmpleado(empleado, TE, idProxTrabajo);
-                    idProxTrabajo++;
-            	}else{
-            		printf("\nNo hay mas lugar disponible....\n");
-            	}
+                aux= agregarEmpleado(empleado, TE, idProxEmpleado);
+            	if(aux==0){
+            		idProxEmpleado++;
+            		contEmpleado++;
+                }
             	limpiar();
                 break;
             case 2:
-                if(aux==0)
+                if(contEmpleado>0)
                 {
-                    modiEmpleado(empleado, TE, idProxTrabajo);
+                	modiEmpleado(empleado, TE, idProxEmpleado);
                 }else{
                     printf("\nNo puede modificar empleados sin antes cargar uno...\n");
                 }
                 limpiar();
                 break;
             case 3:
-                if(aux==0)
-                {
-                    eliminarEmpleado(empleado, TE, idProxTrabajo);
+                if(contEmpleado>0){
+                    aux = eliminarEmpleado(empleado, TE, idProxEmpleado);
+                    if(aux == 0){
+                    	contEmpleado--;
+                    }
                 }else{
                     printf("\nNo puede eliminar empleados sin antes cargar uno...\n");
                 }
                 limpiar();
                 break;
             case 4:
-                if(aux==0)
+                if(contEmpleado>0)
                 {
                 	infoSortEmployee(empleado, TE);
                 }else{
-                    printf("\nSi no carga un empleado no puede ordenarlos...\n");
+                    printf("\nSi no carga un empleado no puede realizar informes...\n");
                 }
                 limpiar();
                 break;

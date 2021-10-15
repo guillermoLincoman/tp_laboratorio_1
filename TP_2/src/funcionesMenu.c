@@ -6,6 +6,13 @@
  */
 #include "funcionesMenu.h"
 
+/** \brief Inicia la estructura usada en el programa
+ *
+ * \param Employee list[] = Estructura de Empleados
+ * \param int len = Tamaño de estructura Empleados
+ *
+ * \return Si se inicializa la estructura retorna 0, en caso de error retorna -1
+ */
 int iniciar(Employee list[], int len)
 {
     int aux;
@@ -18,6 +25,18 @@ int iniciar(Employee list[], int len)
     return error;
 }
 
+/** \brief Agrega un Empleado al programa
+ *
+ *	Carga en una estructura auxiliar una Empleado utilizando la funcion addEmployeeNew,
+ *	con los datos obtenidos le da los datos a la funcion addEmployee en caso de cargar el Empleado
+ *	imprime el nuevo Empleado
+ *
+ * \param eClient list[] = Estructura de Cliente
+ * \param int len = Tamaño de estructura Cliente
+ * \param int proxId = obtiene el id que se le va a dar al nuevo cliente
+ *
+ * \return Si se agrega un cliente retorna 0 en caso de error retorna -1
+ */
 int agregarEmpleado(Employee list[], int len, int proxId)
 {
     int aux;
@@ -29,16 +48,27 @@ int agregarEmpleado(Employee list[], int len, int proxId)
         auxEmpelado = addEmployeeNew(proxId);
         aux=addEmployee(list, len, auxEmpelado.id, auxEmpelado.name, auxEmpelado.lastName, auxEmpelado.salary, auxEmpelado.sector);
         if(aux==0){
-            printf("\nEmpleado registrado con exito...\n");
+        	printf("\nEmpleado registrado con exito...\n");
+            printf("__________________________________________________________________________\n");
+            printf("  ID EMPLEADO   |  SECTOR  |   SALARIO   |     NOMBRE     |    APELLIDO   |\n");
+        	printEmploye(auxEmpelado);
             error=0;
         }
     }
     return error;
 }
 
+/** \brief Modifica los datos de un Empleado del programa
+ *
+ * \param Employee list[] = Estructura de Empleado
+ * \param int len = Tamaño de estructura Empleado
+ * \param int ultimoId = ultimo id ingresado para validar
+ *
+ */
 void modiEmpleado(Employee list[], int len, int ultimoId)
 {
     int aux;
+    aux=-1;
     if(list != NULL)
     {
     	aux = modificarEmpleado(list, len, ultimoId);
@@ -48,9 +78,17 @@ void modiEmpleado(Employee list[], int len, int ultimoId)
     }
 }
 
-void eliminarEmpleado(Employee list[], int len, int ultimoId)
+/** \brief Elimina los datos de un Empleado del programa
+ *
+ * \param Employee list[] = Estructura de Empleado
+ * \param int len = Tamaño de estructura Empleado
+ * \param int ultimoId = ultimo id ingresado para validar
+ *
+ */
+int eliminarEmpleado(Employee list[], int len, int ultimoId)
 {
     int aux;
+    aux=-1;
     if(list != NULL)
     {
     	aux = removeEmployee(list, len, ultimoId);
@@ -58,8 +96,18 @@ void eliminarEmpleado(Employee list[], int len, int ultimoId)
     		printf("\nError, al eliminar empleado...\n");
     	}
     }
+    return aux;
 }
 
+/** \brief Informes con los datos del programa
+ *
+ *	Muestra un menu con informes del programa.
+ *
+ *
+ * \param eClient clientes[] = Estructura de Cliente
+ * \param int lenCliente = Tamaño de estructura Cliente
+ *
+ */
 void infoSortEmployee(Employee list[], int len)
 {
 	int criterio;
