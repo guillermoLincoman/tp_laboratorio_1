@@ -309,7 +309,7 @@ int controller_addEmployee(LinkedList* pArrayListEmployee)
 			horas = cargarUnEntero("Ingrese las horas trabajadas: ", "Error, ingrese una cantidad de horas validas(entre 0 y 400)", 0, 400, 4);
 			employee_setHorasTrabajadas(newEmployee, horas);
 
-			sueldo = cargarUnEntero("Ingrese el sueldo: ", "Error, ingrese un sueldo valido (entre 10000 y 60000)", 10000, 60000, 4);
+			sueldo = cargarUnEntero("Ingrese el sueldo: $", "Error, ingrese un sueldo valido (entre 10000 y 60000)", 10000, 60000, 4);
 			employee_setSueldo(newEmployee, sueldo);
 			limpiarLinux();
 			employee_printOneEmployee(newEmployee);
@@ -403,7 +403,7 @@ int controller_editEmployee(LinkedList* pArrayListEmployee)
 							break;
 						case 2:
 							newHoras = cargarUnEntero("\nIngrese las nuevas horas: ", "\nError, ingrese una cantidad de horas validas valido(entre 0 y 400): ", 0, 400, 4);
-							printf("\nLa nueva cantidad de horas es $%d\n", newHoras);
+							printf("\nLa nueva cantidad de horas es %d\n", newHoras);
 							confirmar = cargarUnEntero("\nDesea cargar la nueva cantidad de horas?(1.Si || 2.No):", "\nError,ingrese un numero valido?(1.Si || 2.No):", 1, 2, 4);
 							if(confirmar == 1)
 							{
@@ -488,6 +488,7 @@ int controller_sortEmployee(LinkedList* pArrayListEmployee)
 						break;
 				}
 			}while(opcion != 0);
+			ll_deleteLinkedList(clone);
 		}
 	}
     return error;
