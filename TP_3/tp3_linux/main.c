@@ -42,8 +42,6 @@ int main()
 					printf("\n\nEl archivo de texto fue cargado correctamente....\n");
 					banderaLista = 0;
 					bandearArchivoTexto = 0;
-					bandearArchivoBinario = 1;
-
 				}else{
 					printf("\n\nNo se encontro el archivo....\n");
 				}
@@ -56,7 +54,6 @@ int main()
 					printf("\n\nEl archivo binario fue cargado correctamente....\n");
 					banderaLista = 0;
 					bandearArchivoBinario = 0;
-					bandearArchivoTexto = 1;
 
 				}else{
 					printf("\n\nNo se encontro el archivo....\n");
