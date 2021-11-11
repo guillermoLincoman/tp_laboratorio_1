@@ -362,7 +362,7 @@ void employee_printOneEmployee(Employee* this)
 		printf("\n __________________________________________________\n");
 		printf("|   ID   |       NOMBRE       |  HORAS  |  SUELDO  |\n");
 		printf("|________|____________________|_________|__________|\n");
-		printf("|  %4d  | %18s |%9d|%10d|\n", idN, nombre, horas, sueldo);
+		printf("|  %4d  | %18s |  %4d   | $ %5d  |\n", idN, nombre, horas, sueldo);
 		printf("*--------------------------------------------------*\n");
 
 	}
@@ -385,8 +385,11 @@ void employee_printEmployee(Employee* this)
 		employee_getNombre(this, nombre);
 		employee_getHorasTrabajadas(this, &horas);
 		employee_getSueldo(this, &sueldo);
-		printf("|  %4d  | %18s |%9d|%10d|\n", idN, nombre, horas, sueldo);
+		printf("|  %4d  | %18s |  %4d   | $ %5d  |\n", idN, nombre, horas, sueldo);
 		printf("*--------------------------------------------------*\n");
 
 	}
 }
+
+
+

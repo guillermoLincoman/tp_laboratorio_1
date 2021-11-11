@@ -14,14 +14,14 @@ void menu()
     printf("**********************************************************************************\n");
 	printf("*                                                                                *\n");
     printf("* 1. Cargar los datos de los empleados desde el archivo data.csv (modo texto).   *\n");
-    printf("* 2. Cargar los datos de los empleados desde el archivo data.csv (modo binario). *\n");
+    printf("* 2. Cargar los datos de los empleados desde el archivo data.bin (modo binario). *\n");
     printf("* 3. Alta de empleado                                                            *\n");
     printf("* 4. Modificar datos de empleado                                                 *\n");
     printf("* 5. Baja de empleado                                                            *\n");
     printf("* 6. Listar empleados                                                            *\n");
     printf("* 7. Ordenar empleados                                                           *\n");
     printf("* 8. Guardar los datos de los empleados en el archivo data.csv (modo texto).     *\n");
-    printf("* 9. Guardar los datos de los empleados en el archivo data.csv (modo binario).   *\n");
+    printf("* 9. Guardar los datos de los empleados en el archivo data.bin (modo binario).   *\n");
     printf("* 0. Salir                                                                       *\n");
     printf("*********************************************************************************\n\n");
 }
@@ -80,6 +80,8 @@ void menuOrdenCriterio()
     printf("***********************************\n\n");
 }
 
+
+
 /** \brief Listar empleados
  *
  * \param pArrayListEmployee LinkedList* = lista para mostrar
@@ -87,7 +89,6 @@ void menuOrdenCriterio()
  * \return int error = En caso de error retorna 1, si puede listar a los empleados retorna 0
  *
  */
-
 int controller_ListEmployee(LinkedList* pArrayListEmployee)
 {
 	int error;
@@ -106,7 +107,7 @@ int controller_ListEmployee(LinkedList* pArrayListEmployee)
 			printf("\n __________________________________________________\n");
 			printf("|   ID   |       NOMBRE       |  HORAS  |  SUELDO  |\n");
 			printf("|________|____________________|_________|__________|\n");
-			for (i = -1; i < len; ++i) {
+			for (i = 0; i < len; ++i) {
 				newEmployee = ll_get(pArrayListEmployee, i);
 				employee_printEmployee(newEmployee);
 			}
@@ -119,52 +120,7 @@ int controller_ListEmployee(LinkedList* pArrayListEmployee)
     return error;
 }
 
-/** \brief Busca el ultimo Id cargado en la lista empleado
- *
- * \param pArrayListEmployee LinkedList* = lista para analizar
- *
- * \return int ultimoId = Retorna el ultimo id de la lista +1, en caso de error retorna -1
- *
- */
-int controller_ultimoId(LinkedList* pArrayListEmployee)
-{
-	int ultimoId;
-	int len;
-	ultimoId = -2;//en caso de error retorna -1 en caso de que los id comiencen en 0
 
-	if(pArrayListEmployee != NULL)
-	{
-		//1. obtengo el tamaño de la lista
-		len = ll_len(pArrayListEmployee);
-
-		//2. Creo un puntero para clonar la lista
-		LinkedList* clone;
-
-		//3. Creo un puntero a empleado
-		Employee* empleado;
-
-		//4. Clono la lista
-		clone = ll_clone(pArrayListEmployee);
-		if(clone != NULL)
-		{
-			//5. Ordeno los id de mayor a menor
-			ll_sort(clone, employee_compareById, 1);
-
-			//6. Obtengo el empleado que tiene el ultimo id
-			empleado = ll_get(clone, len-1);
-
-			if(empleado != NULL)
-			{
-				//7. Guardo el ultimo id en la variable de retorno
-				employee_getId(empleado, &ultimoId);
-			}
-		}
-
-
-	}
-	//8. Retorno el id del ultimo empleado +1
-	return ultimoId+1;
-}
 
 /** \brief Busca la posicion de un empleado segun el id
  *
@@ -182,12 +138,10 @@ int controller_buscarId(LinkedList* pArrayListEmployee, int id)
 	int len;
 	Employee* empleadoId;
 	posError = -1;
-
 	if(pArrayListEmployee != NULL && id >= 0)
 	{
 		//1.Obtengo el tamaño de la lista
 		len = ll_len(pArrayListEmployee);
-
 		//2.Recorro la lista
 		for (i = 0; i < len; ++i) {
 			//3.Analizo empleado por empleado hasta encontrar el buscado
@@ -280,6 +234,43 @@ int controller_loadFromBinary(char* path , LinkedList* pArrayListEmployee)
     return error;
 }
 
+/** \brief Busca el ultimo Id cargado en la lista empleado
+ *
+ * \param pArrayListEmployee LinkedList* = lista para analizar
+ *
+ * \return int ultimoId = Retorna el ultimo id de la lista +1, en caso de error retorna -1
+ * 						  en caso de que la lista no tenga ningun empleado la funcion devuelve 1 como el primer id
+ *
+ */
+int controller_ultimoId(LinkedList* pArrayListEmployee)
+{
+	int ultimoId;
+	int len;
+	Employee* empleado;
+	ultimoId = -2;//en caso de error retorna -1 ->retorno ultimoId +1
+
+	if(pArrayListEmployee != NULL)
+	{
+
+		//1. obtengo el tamaño de la lista
+		len = ll_len(pArrayListEmployee);
+		if(len > 0)
+		{
+			//2. Obtengo el empleado que tiene el ultimo id
+			empleado = ll_get(pArrayListEmployee, len-1);
+			if(empleado != NULL)
+			{
+
+				employee_getId(empleado, &ultimoId);
+			}
+		}else{
+			ultimoId = 0;
+		}
+	}
+	//3. Retorno el id del ultimo empleado +1
+	return ultimoId+1;
+}
+
 /** \brief Alta de empleados
  *
  * \param pArrayListEmployee LinkedList* = lista donde se carga el empleado
@@ -320,6 +311,7 @@ int controller_addEmployee(LinkedList* pArrayListEmployee)
 
 			sueldo = cargarUnEntero("Ingrese el sueldo: ", "Error, ingrese un sueldo valido (entre 10000 y 60000)", 10000, 60000, 4);
 			employee_setSueldo(newEmployee, sueldo);
+			limpiarLinux();
 			employee_printOneEmployee(newEmployee);
 			confirmar = cargarUnEntero("\nDesea cargar el nuevo empleado?(1.Si || 2.No):", "\nError,ingrese un numero valido?(1.Si || 2.No):", 1, 2, 4);
 			if(confirmar == 1)
@@ -440,62 +432,7 @@ int controller_editEmployee(LinkedList* pArrayListEmployee)
     return error;
 }
 
-/** \brief Baja de empleado
- *
- * \param pArrayListEmployee LinkedList* = lista donde se busca el empleado a dar de baja
- *
- * \return int error = Si baja al empleado retorna 0, en caso de error retorna 1
- *
- */
-int controller_removeEmployee(LinkedList* pArrayListEmployee)
-{
 
-	int idBorrar;
-	int ultimoId;
-	int pos;
-	int error;
-	int confirmar;
-	Employee* empleado;
-	error = 1;
-
-	if(pArrayListEmployee != NULL)
-	{
-		printf("*-------------------*\n");
-		printf("| ELIMINAR EMPLEADO |\n");
-		printf("*-------------------*");
-		//2. Muestro la lista de empleados
-		controller_ListEmployee(pArrayListEmployee);
-		puts("\n\n");
-		empleado = employee_new();
-
-		//3.Obtengo el ultimo id para validar
-		ultimoId = controller_ultimoId(pArrayListEmployee);
-
-		//4.Obtengo el id del empleado a borrar
-		idBorrar = cargarUnEntero("\n Ingrese el ID del empleado a Borrar: ", "Error, ingrese un ID valido: ", 0, ultimoId-1, 4);
-
-		//5. busco la posicion del empleado con el id ingresado por el usuario
-		pos = controller_buscarId(pArrayListEmployee, idBorrar);
-
-		//6. Guardo el empleado en el puntero a empleado
-		empleado = ll_get(pArrayListEmployee, pos);
-		//7. Imprimo el empleado
-		employee_printOneEmployee(empleado);
-		confirmar = cargarUnEntero("\nDesea eliminar al empleado?(1.Si || 2.No):", "\nError, ingrese una opcion valida?(1.Si || 2.No):", 1, 2, 4);
-
-		if(confirmar == 1)
-		{
-			ll_remove(pArrayListEmployee, pos);
-			employee_delete(empleado);
-			printf("\nEL empleado fue borrado con exito....\n");
-			error = 0;
-		}else{
-			printf("\nEL empleado no fue borrado....\n");
-		}
-
-	}
-    return error;
-}
 
 
 
@@ -593,7 +530,7 @@ int controller_saveAsText(char* path , LinkedList* pArrayListEmployee)
 
 		//4. Coloco la cabecera
 		fprintf(pArchivo, "id,nombre,horasTrabajadas,sueldo\n");
-		for(i=1; i<len;i++)
+		for(i=0; i<len;i++)
 		{
 			//5. obtengo el empleado con sus datos
 			newEmployee = (Employee*) ll_get(pArrayListEmployee, i);
@@ -665,4 +602,62 @@ int controller_saveAsBinary(char* path , LinkedList* pArrayListEmployee)
 }
 
 
+
+/** \brief Baja de empleado
+ *
+ * \param pArrayListEmployee LinkedList* = lista donde se busca el empleado a dar de baja
+ *
+ * \return int error = Si baja al empleado retorna 0, en caso de error retorna 1
+ *
+ */
+int controller_removeEmployee(LinkedList* pArrayListEmployee)
+{
+
+	int idBorrar;
+	int ultimoId;
+	int pos;
+	int error;
+	int confirmar;
+	Employee* empleado;
+
+	error = 1;
+
+	if(pArrayListEmployee != NULL)
+	{
+		printf("*-------------------*\n");
+		printf("| ELIMINAR EMPLEADO |\n");
+		printf("*-------------------*");
+
+		//2. Muestro la lista de empleados
+		controller_ListEmployee(pArrayListEmployee);
+		puts("\n\n");
+		empleado = employee_new();
+
+		//3.Obtengo el ultimo id para validar
+		ultimoId = controller_ultimoId(pArrayListEmployee);
+
+		//4.Obtengo el id del empleado a borrar
+		idBorrar = cargarUnEntero("\n Ingrese el ID del empleado a Borrar: ", "Error, ingrese un ID valido: ", 0, ultimoId-1, 4);
+
+		//5. busco la posicion del empleado con el id ingresado por el usuario
+		pos = controller_buscarId(pArrayListEmployee, idBorrar);
+
+		//6. Guardo el empleado en el puntero a empleado
+		empleado = ll_get(pArrayListEmployee, pos);
+		//7. Imprimo el empleado
+		employee_printOneEmployee(empleado);
+		confirmar = cargarUnEntero("\nDesea eliminar al empleado?(1.Si || 2.No):", "\nError, ingrese una opcion valida?(1.Si || 2.No):", 1, 2, 4);
+
+		if(confirmar == 1)
+		{
+			ll_remove(pArrayListEmployee, pos);
+			employee_delete(empleado);
+			printf("\nEL empleado fue borrado con exito....\n");
+			error = 0;
+		}else{
+			printf("\nEL empleado no fue borrado....\n");
+		}
+	}
+    return error;
+}
 

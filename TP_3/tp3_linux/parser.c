@@ -77,22 +77,29 @@ int parser_EmployeeFromBinary(FILE* pFile , LinkedList* pArrayListEmployee)
 
 	if(pFile != NULL && pArrayListEmployee != NULL)
 	{
-		while(!feof(pFile))
+
+		while(feof(pFile)==0)
 		{	//1.inicializo el empleado
 			newEmployee = employee_new();
 			//2. cargo los datos
-			fread(newEmployee, sizeof(Employee), 1, pFile);
-			//3. agrego al empleado
-			aux = ll_add(pArrayListEmployee, newEmployee);
-			if(aux != 0)
-			{
-				//4. Si retorna un numero diferente a 0 borro el empleado y rompo la condicion while
-				employee_delete(newEmployee);
-				error = 1;
-				break;
-			}else{
-				error = 0;
-			}
+				fread(newEmployee, sizeof(Employee), 1, pFile);
+				if(!feof(pFile))
+				{
+					//3. agrego al empleado
+					aux = ll_add(pArrayListEmployee, newEmployee);
+					if(aux != 0)
+					{
+						//4. Si retorna un numero diferente a 0 borro el empleado y rompo la condicion while
+						employee_delete(newEmployee);
+						error = 1;
+						break;
+					}else{
+						error = 0;
+					}
+				}else{
+					break;
+				}
+
 		}
 	}
 

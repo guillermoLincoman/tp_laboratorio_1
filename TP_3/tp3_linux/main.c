@@ -29,6 +29,7 @@ int main()
 	bandearArchivoBinario = 1;
 	banderaLista = 1;
 	LinkedList* listaEmpleados = ll_newLinkedList();
+
 	do{
 		menu();
 		opcion = cargarUnEntero("Ingrese una opcion: ", "Error, ingrese una opcion", 0, 9, 4);
@@ -38,9 +39,11 @@ int main()
 				aux = controller_loadFromText("data.csv", listaEmpleados);
 				if(aux == 0)
 				{
-					printf("\n\nEl archivo de texto fue guardado correctamente....\n");
+					printf("\n\nEl archivo de texto fue cargado correctamente....\n");
 					banderaLista = 0;
 					bandearArchivoTexto = 0;
+					bandearArchivoBinario = 1;
+
 				}else{
 					printf("\n\nNo se encontro el archivo....\n");
 				}
@@ -50,9 +53,13 @@ int main()
 				aux = controller_loadFromBinary("data.bin", listaEmpleados);
 				if(aux == 0)
 				{
-					printf("\n\nEl archivo binario fue guardado correctamente....\n");
+					printf("\n\nEl archivo binario fue cargado correctamente....\n");
 					banderaLista = 0;
 					bandearArchivoBinario = 0;
+					bandearArchivoTexto = 1;
+
+				}else{
+					printf("\n\nNo se encontro el archivo....\n");
 				}
 				limpiarLinux();
 				break;
@@ -113,7 +120,6 @@ int main()
 					}else
 					{
 						printf("\n\nOcurrio un error al guardar el archivo de texto....\n");
-
 					}
 				}else{
 					printf("\n\nNo se puede guardar un archivo de texto hasta no crear uno....\n");
@@ -136,7 +142,6 @@ int main()
 					printf("\n\nNo se puede guardar un archivo binario hasta no crear uno....\n");
 				}
 				limpiarLinux();
-
 				break;
 		}
 	}while(opcion != 0);
